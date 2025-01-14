@@ -5,10 +5,44 @@ pipeline {
         }
     }
 }
-stages {
-    stage('Hello') {
-        steps {
-            echo 'Hello World'
+
+    environment {
+        MY_ENV_VAR = 'value'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out the code from Git...'
+                git 'https://github.com/brasleiro01/desafio-del.tech.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+                // Coloque aqui seus comandos de build, como `mvn clean install` ou `npm install`
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                // Coloque aqui os comandos para rodar os testes, como `mvn test` ou `npm test`
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying to production...'
+                // Coloque aqui os comandos de deploy, como `scp` ou `kubectl apply`
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
