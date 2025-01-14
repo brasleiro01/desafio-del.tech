@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
+    labels:
+      co.elastic.logs/module: elasticsearch
+    container_name: elasticsearch
+    volumes:
+      - esdata01:/var/tmp/elasticsearch/data
+    environment: 
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.authc.serviceAccount.enabled=true
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    mem_limit: ${ES_MEM_LIMIT}
+    ports:
+      - ${ES_PORT}:9200
+  
+  logstash:
+    image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
+    container_name: logstash
+    volumes:
+      - logstashdata01:/var/tmplogstash/data
+      - "./logstash_ingest_data/:/var/tmp/logstash/ingest_data/"
+      - "./logstash.conf:/var/tmp/logstash/pipeline/logstash.conf"
+    environment:
+      - xpack.monitoring.enabled=false
+      - ELASTIC_USER=${ELASTIC_USER}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5044:5044"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    labels:
+      co.elastic.logs/module: kibana
+    volumes:
+      - kibanadata:/var/tmp/kibana/data
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=certificate
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_SERVICEACCOUNTTOKEN=${ELASTICSEARCH_SERVICEACCOUNTTOKEN}
+    mem_limit: ${KB_MEM_LIMIT}
+    depends_on:
+      - elasticsearch
+    ports:
+      - ${KIBANA_PORT}:5601
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:${STACK_VERSION}
+    container_name: filebeat
+    environment:
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_HOSTS=http://elasticsearch:9200
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=http://logstash:9600
+    command:
+      - --strict.perms=false
+    volumes:
+      - filebeatdata01:/var/tmp/filebeat/data
+      - "./filebeat_ingest_data/:/var/tmp/filebeat/ingest_data/"
+      - "./filebeat.yml:/var/tmp/filebeat/filebeat.yml:ro"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    depends_on:
+      - logstash
+    entrypoint: ["filebeat", "-e", "-strict.perms=false"]
+    user: root
+
+  metricbeat01:
+    image: docker.elastic.co/beats/metricbeat:${STACK_VERSION}
+    container_name: metricbeat
+    user: root
+    volumes:
+      - metricbeatdata01:/var/tmp/metricbeat/data
+      - "./metricbeat.yml:/var/tmp/metricbeat/metricbeat.yml:rw"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
+      - "/proc:/hostfs/proc:ro"
+      - "/:/hostfs:ro"
+    environment:
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_HOSTS=http://elasticsearch:9200
+      - KIBANA_HOSTS=http://kibana:5601
+      - LOGSTASH_HOSTS=http://logstash:9600
+    command:
+      - --strict.perms=false
+
+volumes:
+  esdata01:
+    driver: local
+  logstashdata01:
+    driver: local
+  kibanadata:
+    driver: local
+  filebeatdata01:
+    driver: local
+  metricbeatdata01:
+    driver: local
+
+networks:
+  default:
+    name: elastic

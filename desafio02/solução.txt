@@ -1,0 +1,10 @@
+efetuado a criação da imagem base com o alpine instalção do nginx e substituição do arquivos index.html e inclusão do bloco "server" no nginx.conf
+comandos utilizados:
+1- criar imagem e informar o nome
+docker build -t meu-nginx .
+
+2- verificar se a imagem foi criada
+sudo docker image ls
+
+3- criar o container 
+sudo docker run -d -p 8080:80 meu-nginx:latest

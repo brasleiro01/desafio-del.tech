@@ -1,0 +1,7 @@
+a partir da versão 8 do elastic é necessário criar um token de serviço para que o kibana possa se conectar.
+após subir o container do elastic necessario criar o token acessando o container via postman ou outra ferramenta.
+comandos para criar o token "forkibana":
+POST
+http://localhost:9200/_security/service/elastic/kibana/credential/token/forkibana
+
+segindo o meu docker compose vai subir a stack completa com elastic, logtash, kibana, filebeat e metricbeat configurado para monitorar o host (maquina fisica)

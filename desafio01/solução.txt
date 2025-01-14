@@ -1,0 +1,15 @@
+nesse desafio foi criado uma api em python conectada ao mongodb conforme solicitado com duas rotas sendo uma de get (consulta) e uma de post (insert).
+instalada as dependencias necessarias com flask e pymongo.
+criamos a imagem docker com o dockerfile.
+subimos a app com o docker compose.
+utilizamos o postman para visualizar e inserir dados na app.
+para visualizar os dados 
+GET 'http://localhost:5000/users'
+
+para inserir dados
+POST 'http://localhost:5000/users' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Everton Souza",
+    "email": "medium@medium.com"
+}'

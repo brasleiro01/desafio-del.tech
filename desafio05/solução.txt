@@ -1,0 +1,5 @@
+criado um app em python e hospedado no render porem a cada 5 minutos o app para devido restrição do render por ser free.
+scrap configurado para coletar o localhost e o https://app-yk63.onrender.com/
+efetuado integração do prometheus com o grafana.
+segue dashboard para ser importado no grafana para que possa visualizar as metricas do app.
+usuário e senha do gradana admin admin para o primeiro login.
