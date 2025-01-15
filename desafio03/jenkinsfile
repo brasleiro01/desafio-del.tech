@@ -1,44 +1,12 @@
 pipeline {
-    agent any
-}
-
-    environment {
-        MY_ENV_VAR = 'value'
-    }
+    agent any  // Executar em qualquer agente disponível (pode ser substituído por um agente específico)
 
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                echo 'Checking out the code from Git...'
-                git 'https://github.com/brasleiro01/desafio-del.tech.git'
+                // Clona o repositório Git
+                git url: 'https://github.com/brasleiro01/desafio-del.tech.git', branch: 'main'
             }
-        }
-        stage('Build') {
-            steps {
-                echo 'Building the project...'
-                // Coloque aqui seus comandos de build, como `mvn clean install` ou `npm install`
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                // Coloque aqui os comandos para rodar os testes, como `mvn test` ou `npm test`
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying to production...'
-                // Coloque aqui os comandos de deploy, como `scp` ou `kubectl apply`
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
         }
     }
 }
