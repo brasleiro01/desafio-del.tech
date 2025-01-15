@@ -7,8 +7,7 @@ pipeline {
             steps {
                 git url: 'https://github.com/brasleiro01/desafio-del.tech.git', branch: 'main'
             }
-        }
-        
+                
     stage ( 'Build and Run Docker Container' ) {
         steps {
             script {
