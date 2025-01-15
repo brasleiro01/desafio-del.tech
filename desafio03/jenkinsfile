@@ -1,49 +1,35 @@
 pipeline {
-    agent any  // Executar o pipeline em qualquer agente disponível
+
+    agent any
 
     stages {
-        stage('Clone Repository') {
+        stage ( 'Clone Repository' ) {
             steps {
                 git url: 'https://github.com/brasleiro01/desafio-del.tech.git', branch: 'main'
             }
         }
         
-        stage('Build and Run Docker Container') {
-            steps {
-                script {
-                    // Executa um container Docker
-                    // Use uma imagem Docker pública ou personalizada
-                    echo 'Iniciando o container Docker...'
-                    def myContainer = docker.run('ubuntu:latest', '-d', 'sleep', 'infinity')
-
-                    // Aguarda o container ficar pronto
-                    sleep(time: 10, unit: 'SECONDS')
-
-                    // Executa um comando/script dentro do container
-                    echo 'Executando um comando dentro do container Docker...'
-                    sh "docker exec ${myContainer.id} bash -c 'echo Hello from inside the container!'"
-
-                    // Finaliza o container após a execução do script
-                    sh "docker stop ${myContainer.id}"
+    stage ( 'Build and Run Docker Container' ) {
+        steps {
+            script {
+                echo 'Iniciando o container Docker...'
+                def myContainer = docker.run('ubuntu:latest', '-d', 'sleep', 'infinity')
+                sleep(time: 10, unit: 'SECONDS')
+                echo 'Executando um comando dentro do container Docker...'
+                sh "docker exec ${myContainer.id} bash -c 'echo Hello from inside the container!'"
+                sh "docker stop ${myContainer.id}"
                 }
             }
         }
         
-        stage('Deploy') {
-            steps {
-                script {
-                    // Executa outro container Docker na etapa de Deploy
-                    echo 'Executando o container para Deploy...'
-                    def deployContainer = docker.run('nginx:latest', '-d', '-p', '8080:80')
-
-                    // Aguarda o container do Nginx estar em execução
-                    sleep(time: 5, unit: 'SECONDS')
-
-                    // Comando de deploy (exemplo: adicionar um arquivo ou configurar algo no container)
-                    sh "docker exec ${deployContainer.id} bash -c 'echo Deploy realizado!'"
-                    
-                    // Finaliza o container de deploy
-                    sh "docker stop ${deployContainer.id}"
+    stage ( 'Deploy' ) {
+        steps {
+            script {
+                echo 'Executando o container para Deploy...'
+                def deployContainer = docker.run('nginx:latest', '-d', '-p', '8080:80')
+                sleep(time: 5, unit: 'SECONDS')
+                sh "docker exec ${deployContainer.id} bash -c 'echo Deploy realizado!'"
+                sh "docker stop ${deployContainer.id}"
                 }
             }
         }
