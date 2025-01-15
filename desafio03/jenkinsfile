@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'ubuntu:latest'  // Imagem do Docker a ser utilizada
+            image 'alpine:latest'  // Imagem do Docker a ser utilizada
         }
     }
 
