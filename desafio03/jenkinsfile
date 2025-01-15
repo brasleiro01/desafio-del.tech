@@ -1,12 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Clone Repository') {
-            steps {
-                git url: 'https://github.com/brasleiro01/desafio-del.tech.git', branch: 'main'
-            }
-        }
-        stage('Build and Run Docker Container') {
+        stage('Build and Run') {
             steps {
                 script {
                     echo 'Iniciando o container Docker...'
