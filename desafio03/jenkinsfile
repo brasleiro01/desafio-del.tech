@@ -1,6 +1,9 @@
 pipeline {
     agent any  // Executar o pipeline em qualquer agente disponível
 
+def runOutsideSandbox() {
+    // Coloque o código que você deseja rodar fora da sandbox aqui
+}
     stages {
         stage('Clone Repository') {
             steps {
