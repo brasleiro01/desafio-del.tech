@@ -4,7 +4,6 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                // Clona o repositório Git (substitua pelo seu repositório)
                 git url: 'https://github.com/brasleiro01/desafio-del.tech.git', branch: 'main'
             }
         }
