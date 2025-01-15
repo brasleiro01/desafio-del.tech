@@ -1,9 +1,6 @@
 pipeline {
     agent any  // Executar o pipeline em qualquer agente disponível
 
-def runOutsideSandbox() {
-    // Coloque o código que você deseja rodar fora da sandbox aqui
-}
     stages {
         stage('Clone Repository') {
             steps {
@@ -15,19 +12,10 @@ def runOutsideSandbox() {
         stage('Build and Run Docker Container') {
             steps {
                 script {
-                    // Executa um container Docker
-                    echo 'Iniciando o container Docker...'
-                    def myContainer = docker.run('ubuntu:latest', '-d', 'sleep', 'infinity')
-
-                    // Aguarda o container ficar pronto
-                    sleep(time: 10, unit: 'SECONDS')
-
-                    // Executa um comando/script dentro do container
-                    echo 'Executando um comando dentro do container Docker...'
-                    sh "docker exec ${myContainer.id} bash -c 'echo Hello from inside the container!'"
-
-                    // Finaliza o container após a execução do script
-                    sh "docker stop ${myContainer.id}"
+                    // Usando docker.image().inside para executar comandos dentro de um container
+                    docker.image('ubuntu:latest').inside {
+                        sh 'echo Hello from inside the Docker container!'
+                    }
                 }
             }
         }
@@ -35,18 +23,10 @@ def runOutsideSandbox() {
         stage('Deploy') {
             steps {
                 script {
-                    // Executa outro container Docker na etapa de Deploy
-                    echo 'Executando o container para Deploy...'
-                    def deployContainer = docker.run('nginx:latest', '-d', '-p', '8080:80')
-
-                    // Aguarda o container do Nginx estar em execução
-                    sleep(time: 5, unit: 'SECONDS')
-
-                    // Comando de deploy (exemplo: adicionar um arquivo ou configurar algo no container)
-                    sh "docker exec ${deployContainer.id} bash -c 'echo Deploy realizado!'"
-                    
-                    // Finaliza o container de deploy
-                    sh "docker stop ${deployContainer.id}"
+                    // Executando um outro container Docker para o deploy
+                    docker.image('nginx:latest').inside {
+                        sh 'echo Deploy realizado!'
+                    }
                 }
             }
         }
