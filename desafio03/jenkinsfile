@@ -2,7 +2,6 @@ pipeline {
     agent {
         docker {
             image 'ubuntu:latest'  // Imagem do Docker a ser utilizada
-            label 'docker'         // (opcional) rótulo do agente, caso seja necessário especificar
         }
     }
 
