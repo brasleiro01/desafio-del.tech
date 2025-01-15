@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                echo 'Building..'
+                def myContainer = docker.run('ubuntu:latest', '-d', 'sleep', 'infinity')
+                sleep(time: 10, unit: 'SECONDS')
+                echo 'Executando um comando dentro do container Docker...'
+                sh "docker exec ${myContainer.id} bash -c 'echo Hello from inside the container!'"
+                sh "docker stop ${myContainer.id}"
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
+}
