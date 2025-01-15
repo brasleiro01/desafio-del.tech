@@ -1,5 +1,10 @@
 pipeline {
-    agent any  // Executar o pipeline em qualquer agente disponível
+    agent {
+        docker {
+            image 'ubuntu:latest'  // Imagem do Docker a ser utilizada
+            label 'docker'         // (opcional) rótulo do agente, caso seja necessário especificar
+        }
+    }
 
     stages {
         stage('Clone Repository') {
@@ -13,9 +18,7 @@ pipeline {
             steps {
                 script {
                     // Usando docker.image().inside para executar comandos dentro de um container
-                    docker.image('ubuntu:latest').inside {
-                        sh 'echo Hello from inside the Docker container!'
-                    }
+                    sh 'echo Hello from inside the Docker container!'
                 }
             }
         }
